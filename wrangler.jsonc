@@ -1,0 +1,13 @@
+{
+    "name": "jurassic-park-terminal",
+    "main": "index.html",
+    "compatibility_date": "2025-04-17",
+    "pages": {
+      "build": {
+        "output_dir": ".", // Output directory where index.html and assets are located
+        "static_assets": {
+          "path": "assets" // Path to static assets folder
+        }
+      }
+    }
+}
