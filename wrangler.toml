@@ -1,0 +1,6 @@
+name = "mrlovatt"
+compatibility_date = "2025-04-17"
+pages_build_output_dir = "."
+
+[site]
+bucket = "." # Serve static files from the root directory
