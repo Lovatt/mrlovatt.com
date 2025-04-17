@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jurassic Park Terminal</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #0000AA; /* Jurassic Park terminal blue */
+            overflow: hidden;
+        }
+
+        .terminal-container {
+            position: relative;
+            width: 800px;
+            height: 600px;
+            background: #0000AA;
+            border: 5px solid #A9A9A9; /* Gray border like old Mac terminal */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        .title-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 20px;
+            background: #A9A9A9;
+            color: #000;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 20px;
+            text-align: center;
+            border-bottom: 2px solid #000;
+        }
+
+        .terminal-text {
+            position: absolute;
+            top: 30px;
+            left: 10px;
+            color: #00FF00; /* Green terminal text */
+            font-family: 'Courier New', 'VGA', monospace;
+            font-size: 14px;
+            white-space: pre;
+            opacity: 0.9;
+            animation: flicker 0.15s infinite alternate;
+        }
+
+        .dennis-image {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            animation: shake 0.2s infinite;
+            cursor: pointer; /* Indicate clickability */
+        }
+
+        @keyframes shake {
+            0% { transform: translate(-50%, -50%) translateX(0); }
+            50% { transform: translate(-50%, -50%) translateX(-5px); }
+            100% { transform: translate(-50%, -50%) translateX(5px); }
+        }
+
+        @keyframes flicker {
+            0% { opacity: 0.9; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="terminal-container">
+        <div class="title-bar">Jurassic Park Security System</div>
+        <div class="terminal-text" id="terminalText"></div>
+        <img src="image.gif" alt="Dennis Nedry" class="dennis-image" id="dennisImage">
+    </div>
+    <audio id="nedrySound" src="ah-ah-ah.mp3"></audio>
+
+    <script>
+        const terminalText = document.getElementById('terminalText');
+        const dennisImage = document.getElementById('dennisImage');
+        const nedrySound = document.getElementById('nedrySound');
+        const commands = [
+            "C:\\> dir",
+            "dir *.exe",
+            "C:\\> cd jurassic",
+            "C:\\JURASSIC> run park.exe",
+            "ACCESS DENIED",
+            "C:\\JURASSIC> hack system",
+            "ERROR: YOU DIDN'T SAY THE MAGIC WORD!",
+            "C:\\JURASSIC> ah_ah_ah.exe"
+        ];
+
+        // Play sound on page load
+        window.addEventListener('load', () => {
+            nedrySound.play().catch(error => {
+                console.log('Autoplay prevented:', error);
+            });
+        });
+
+        // Play sound when image is clicked
+        dennisImage.addEventListener('click', () => {
+            nedrySound.currentTime = 0; // Reset to start
+            nedrySound.play().catch(error => {
+                console.log('Sound play error:', error);
+            });
+        });
+
+        let currentCommand = 0;
+        let currentChar = 0;
+        let textBuffer = '';
+
+        function typeText() {
+            if (currentCommand < commands.length) {
+                if (currentChar < commands[currentCommand].length) {
+                    textBuffer += commands[currentCommand][currentChar];
+                    terminalText.textContent = textBuffer + '_';
+                    currentChar++;
+                    setTimeout(typeText, 100); // Typing speed
+                } else {
+                    textBuffer += '\n';
+                    terminalText.textContent = textBuffer + '_';
+                    currentCommand++;
+                    currentChar = 0;
+                    setTimeout(typeText, 1000); // Pause before next command
+                }
+            } else {
+                // Loop back to start
+                textBuffer = '';
+                currentCommand = 0;
+                currentChar = 0;
+                setTimeout(typeText, 2000); // Pause before restarting
+            }
+        }
+
+        typeText();
+    </script>
+</body>
+</html>
