@@ -4,27 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jurassic Park Terminal</title>
+    <link rel="preload" href="./assets/image.gif" as="image"> <!-- Preload GIF -->
     <style>
         body {
             margin: 0;
-            height: 100vh;
+            min-height: 100vh; /* Ensure body takes full viewport height */
             display: flex;
             justify-content: center;
             align-items: center;
             background: #0000AA; /* Jurassic Park terminal blue */
-            overflow: hidden;
+            overflow-y: auto; /* Allow scrolling if content overflows */
         }
 
         .terminal-container {
             position: relative;
             width: 90vw; /* 90% of viewport width */
             max-width: 800px; /* Max width for larger screens */
-            height: 70vh; /* 70% of viewport height */
-            max-height: 600px; /* Max height for larger screens */
+            min-height: 70vh; /* Minimum height to fit content */
+            max-height: 600px; /* Cap height for larger screens */
             background: #0000AA;
             border: 5px solid #A9A9A9; /* Gray border like old Mac terminal */
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            overflow: hidden;
+            margin: 20px; /* Add space around the terminal */
+            box-sizing: border-box; /* Include border in dimensions */
         }
 
         .title-bar {
@@ -54,21 +56,31 @@
             animation: flicker 0.15s infinite alternate;
         }
 
-        .dennis-image {
+        .image-wrapper {
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%); /* Center wrapper */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .dennis-image {
             width: 40vw; /* Scale with viewport */
             max-width: 300px; /* Max size for larger screens */
-            animation: shake 0.2s infinite;
             cursor: pointer; /* Indicate clickability */
+            animation: shake 0.2s infinite; /* Continuous shake */
+        }
+
+        .dennis-image.enlarge {
+            animation: enlarge 0.6s ease; /* Trigger grow-shrink animation */
         }
 
         @keyframes shake {
-            0% { transform: translate(-50%, -50%) translateX(0); }
-            50% { transform: translate(-50%, -50%) translateX(-5px); }
-            100% { transform: translate(-50%, -50%) translateX(5px); }
+            0% { transform: translateX(0); }
+            50% { transform: translateX(-5px); }
+            100% { transform: translateX(5px); }
         }
 
         @keyframes flicker {
@@ -76,11 +88,18 @@
             100% { opacity: 1; }
         }
 
+        @keyframes enlarge {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.5); } /* Peak at 1.5x */
+            100% { transform: scale(1); } /* Back to original */
+        }
+
         /* Media query for smaller screens (e.g., mobile) */
         @media (max-width: 600px) {
             .terminal-container {
-                width: 95vw; /* Nearly full width on small screens */
-                height: 80vh; /* More vertical space */
+                width: 92vw; /* Slightly less to allow margin */
+                min-height: 75vh; /* Ensure enough height for content */
+                margin: 10px; /* Smaller margin for mobile */
             }
 
             .title-bar {
@@ -92,12 +111,22 @@
             .terminal-text {
                 top: 20px; /* Adjust for smaller title bar */
                 left: 8px;
-                font-size: 12px; /* Smaller text for readability */
+                font-size: 11px; /* Smaller text for readability */
             }
 
             .dennis-image {
                 width: 50vw; /* Slightly larger image for visibility */
-                max-width: 200px; /* Cap size for small screens */
+                max-width: 180px; /* Smaller cap for mobile */
+            }
+
+            .dennis-image.enlarge {
+                animation: enlarge-mobile 0.6s ease; /* Mobile-specific animation */
+            }
+
+            @keyframes enlarge-mobile {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.4); } /* Smaller peak for mobile */
+                100% { transform: scale(1); } /* Back to original */
             }
         }
     </style>
@@ -106,7 +135,9 @@
     <div class="terminal-container">
         <div class="title-bar">Jurassic Park Security System</div>
         <div class="terminal-text" id="terminalText"></div>
-        <img src="./assets/image.gif" alt="Dennis Nedry" class="dennis-image" id="dennisImage">
+        <div class="image-wrapper">
+            <img src="./assets/image.gif" alt="Dennis Nedry" class="dennis-image" id="dennisImage">
+        </div>
     </div>
     <audio id="nedrySound" src="./assets/ah-ah-ah.mp3"></audio>
 
@@ -132,12 +163,19 @@
             });
         });
 
-        // Play sound when image is clicked
+        // Play sound and trigger enlarge animation when image is clicked
         dennisImage.addEventListener('click', () => {
             nedrySound.currentTime = 0; // Reset to start
             nedrySound.play().catch(error => {
                 console.log('Sound play error:', error);
             });
+
+            // Toggle enlarge class to trigger animation
+            dennisImage.classList.add('enlarge');
+            // Remove class after animation completes (600ms)
+            setTimeout(() => {
+                dennisImage.classList.remove('enlarge');
+            }, 600);
         });
 
         let currentCommand = 0;
