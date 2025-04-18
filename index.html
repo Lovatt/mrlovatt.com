@@ -12,7 +12,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background: #0000AA; /* Jurassic Park terminal blue */
+            background: #000; /* Solid black background */
             overflow-y: auto; /* Allow scrolling if content overflows */
         }
 
@@ -22,11 +22,24 @@
             max-width: 800px; /* Max width for larger screens */
             min-height: 70vh; /* Minimum height to fit content */
             max-height: 600px; /* Cap height for larger screens */
-            background: #0000AA;
+            background: rgba(0, 0, 170, 0.95); /* Semi-transparent blue */
             border: 5px solid #A9A9A9; /* Gray border like old Mac terminal */
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
             margin: 20px; /* Add space around the terminal */
             box-sizing: border-box; /* Include border in dimensions */
+        }
+
+        .terminal-container::before {
+            content: 'Praetorians';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #00FF00;
+            font-family: 'Courier New', monospace;
+            font-size: 48px;
+            opacity: 0.1;
+            pointer-events: none;
         }
 
         .title-bar {
@@ -77,6 +90,113 @@
             animation: enlarge 0.6s ease; /* Trigger grow-shrink animation */
         }
 
+        .pi-icon {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            color: #00FF00; /* Match terminal text */
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+
+        .pi-icon:hover {
+            opacity: 1;
+        }
+
+        .hidden-message {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #00FF00;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border: 2px solid #00FF00;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .hidden-message.show {
+            display: block;
+            opacity: 1;
+        }
+
+        .login-screen {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #00FF00;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border: 2px solid #00FF00;
+            width: 80%;
+            max-width: 400px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .login-screen.show {
+            display: block;
+            opacity: 1;
+        }
+
+        .login-screen input {
+            background: none;
+            border: none;
+            color: #00FF00;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            outline: none;
+            width: 100%;
+            margin: 5px 0;
+        }
+
+        .login-screen input[type="password"] {
+            letter-spacing: 2px; /* Mimic hidden password */
+        }
+
+        .login-screen .cursor::after {
+            content: '_';
+            animation: blink 1s step-end infinite;
+            margin-left: 2px;
+        }
+
+        .login-screen .button {
+            margin-top: 20px;
+            color: #00FF00;
+            border: 1px solid #00FF00;
+            padding: 5px 10px;
+            cursor: pointer;
+            display: inline-block;
+            transition: background 0.3s ease;
+            margin-right: 10px;
+        }
+
+        .login-screen .button:hover {
+            background: rgba(0, 255, 0, 0.2);
+        }
+
+        .login-screen .feedback {
+            margin-top: 10px;
+            display: none;
+            text-align: center;
+        }
+
+        .login-screen .feedback.show {
+            display: block;
+        }
+
         @keyframes shake {
             0% { transform: translateX(0); }
             50% { transform: translateX(-5px); }
@@ -94,12 +214,22 @@
             100% { transform: scale(1); } /* Back to original */
         }
 
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
         /* Media query for smaller screens (e.g., mobile) */
         @media (max-width: 600px) {
             .terminal-container {
                 width: 92vw; /* Slightly less to allow margin */
                 min-height: 75vh; /* Ensure enough height for content */
                 margin: 10px; /* Smaller margin for mobile */
+            }
+
+            .terminal-container::before {
+                font-size: 36px; /* Smaller watermark */
             }
 
             .title-bar {
@@ -123,6 +253,36 @@
                 animation: enlarge-mobile 0.6s ease; /* Mobile-specific animation */
             }
 
+            .pi-icon {
+                font-size: 16px; /* Slightly smaller for mobile */
+                bottom: 8px;
+                right: 8px;
+            }
+
+            .hidden-message {
+                font-size: 14px; /* Smaller text for mobile */
+                padding: 15px;
+            }
+
+            .login-screen {
+                font-size: 14px; /* Smaller text for mobile */
+                padding: 15px;
+                width: 90%;
+            }
+
+            .login-screen input {
+                font-size: 14px;
+            }
+
+            .login-screen .button {
+                padding: 4px 8px;
+                font-size: 12px;
+            }
+
+            .login-screen .feedback {
+                font-size: 12px;
+            }
+
             @keyframes enlarge-mobile {
                 0% { transform: scale(1); }
                 50% { transform: scale(1.4); } /* Smaller peak for mobile */
@@ -138,12 +298,30 @@
         <div class="image-wrapper">
             <img src="./assets/image.gif" alt="Dennis Nedry" class="dennis-image" id="dennisImage">
         </div>
+        <div class="pi-icon" id="piIcon">π</div> <!-- Pi symbol -->
+        <div class="hidden-message" id="hiddenMessage">System Backdoor Accessed<br>Warning: Unauthorised Entry Detected</div>
+        <div class="login-screen" id="loginScreen">
+            <div>InGen Security System</div>
+            <div>Username: <input type="text" id="usernameInput" class="cursor" autocomplete="off"></div>
+            <div>Password: <input type="password" id="passwordInput" autocomplete="off"></div>
+            <div class="button" id="loginButton">Login</div>
+            <div class="button" id="cancelButton">Cancel</div>
+            <div class="feedback" id="feedbackMessage"></div>
+        </div>
     </div>
     <audio id="nedrySound" src="./assets/ah-ah-ah.mp3"></audio>
 
     <script>
         const terminalText = document.getElementById('terminalText');
         const dennisImage = document.getElementById('dennisImage');
+        const piIcon = document.getElementById('piIcon');
+        const hiddenMessage = document.getElementById('hiddenMessage');
+        const loginScreen = document.getElementById('loginScreen');
+        const usernameInput = document.getElementById('usernameInput');
+        const passwordInput = document.getElementById('passwordInput');
+        const loginButton = document.getElementById('loginButton');
+        const cancelButton = document.getElementById('cancelButton');
+        const feedbackMessage = document.getElementById('feedbackMessage');
         const nedrySound = document.getElementById('nedrySound');
         const commands = [
             "C:\\> dir",
@@ -155,6 +333,10 @@
             "ERROR: YOU DIDN'T SAY THE MAGIC WORD!",
             "C:\\JURASSIC> ah_ah_ah.exe"
         ];
+
+        // Hardcoded credentials
+        const validUsername = 'nedry';
+        const validPassword = 'magicword';
 
         // Play sound on page load
         window.addEventListener('load', () => {
@@ -176,6 +358,80 @@
             setTimeout(() => {
                 dennisImage.classList.remove('enlarge');
             }, 600);
+        });
+
+        // Show hidden message, then login screen when pi icon is clicked
+        piIcon.addEventListener('click', () => {
+            nedrySound.currentTime = 0; // Reset to start
+            nedrySound.play().catch(error => {
+                console.log('Sound play error:', error);
+            });
+
+            // Show hidden message
+            hiddenMessage.classList.add('show');
+            // Hide message and show login screen after 3 seconds
+            setTimeout(() => {
+                hiddenMessage.classList.remove('show');
+                // Hide terminal content
+                terminalText.style.display = 'none';
+                dennisImage.style.display = 'none';
+                // Show login screen
+                loginScreen.classList.add('show');
+                // Reset inputs and feedback
+                usernameInput.value = '';
+                passwordInput.value = '';
+                feedbackMessage.classList.remove('show');
+                feedbackMessage.textContent = '';
+            }, 3000);
+        });
+
+        // Handle login authentication
+        loginButton.addEventListener('click', () => {
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value.trim();
+
+            if (username === validUsername && password === validPassword) {
+                // Success
+                feedbackMessage.textContent = 'Access Granted';
+                feedbackMessage.classList.add('show');
+                nedrySound.currentTime = 0;
+                nedrySound.play().catch(error => {
+                    console.log('Sound play error:', error);
+                });
+                // Hide login screen and restore terminal after 3 seconds
+                setTimeout(() => {
+                    loginScreen.classList.remove('show');
+                    terminalText.style.display = 'block';
+                    dennisImage.style.display = 'block';
+                    feedbackMessage.classList.remove('show');
+                }, 3000);
+            } else {
+                // Failure
+                feedbackMessage.textContent = 'Access Denied';
+                feedbackMessage.classList.add('show');
+                nedrySound.currentTime = 0;
+                nedrySound.play().catch(error => {
+                    console.log('Sound play error:', error);
+                });
+                // Allow retry after 3 seconds
+                setTimeout(() => {
+                    feedbackMessage.classList.remove('show');
+                    feedbackMessage.textContent = '';
+                }, 3000);
+            }
+        });
+
+        // Hide login screen and restore terminal when cancel is clicked
+        cancelButton.addEventListener('click', () => {
+            loginScreen.classList.remove('show');
+            // Restore terminal content
+            terminalText.style.display = 'block';
+            dennisImage.style.display = 'block';
+            // Reset inputs and feedback
+            usernameInput.value = '';
+            passwordInput.value = '';
+            feedbackMessage.classList.remove('show');
+            feedbackMessage.textContent = '';
         });
 
         let currentCommand = 0;
